@@ -102,6 +102,10 @@ func Status() {
 	}
 }
 
+func Update() {
+	//TODO: logic for updating the binary
+}
+
 func Figlet() {
 	// Open the file.
 	f, _ := os.Open("..\\misc\\flight.txt")

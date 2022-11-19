@@ -20,6 +20,8 @@ func main() {
 			funcs.Uninstall(cli[1:])
 		} else if cli[0] == "status" || cli[0] == "s" || cli[0] == "st" {
 			funcs.Status()
+		} else if cli[0] == "update" || cli[0] == "up" || cli[0] == "u" {
+			funcs.Update()
 		} else {
 			fmt.Println("flight <command> [arguments]")
 		}
