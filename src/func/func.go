@@ -54,6 +54,14 @@ func Install(args []string) {
 	}
 }
 
+func Uninstall(args []string) {
+	if len(args) != 1 {
+		fmt.Println("flight uninstall <pkg>")
+	} else {
+		os.RemoveAll(fmt.Sprintf("./node_modules/%v", args[0]))
+	}
+}
+
 func Figlet() {
 	// Open the file.
 	f, _ := os.Open("..\\misc\\flight.txt")
