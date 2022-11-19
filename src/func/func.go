@@ -7,6 +7,8 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"strconv"
+	"strings"
 
 	grab "github.com/cavaliergopher/grab/v3"
 	targz "github.com/walle/targz"
@@ -69,9 +71,35 @@ func Uninstall(args []string) {
 }
 
 func Status() {
-	Version := "2.0.3"
-	fmt.Printf("Version: %v", Version)
-	//TODO: get updating working
+	version := "2.0.3"
+	version_dotless, _ := strconv.ParseInt(strings.ReplaceAll(version, ".", ""), 10, 64)
+	latest := "https://api.github.com/repos/flightpkg/flight-v2/releases/latest"
+	fmt.Printf("Version: %v\n", version)
+	resp, err := http.Get(latest)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	defer resp.Body.Close()
+
+	body, err := ioutil.ReadAll(resp.Body)
+
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	/* Getting the version of the package that is being installed. */
+	var data map[string]interface{}
+	json.Unmarshal(body, &data)
+
+	latest_tag := data["tag_name"].(string)
+	latest_tag_dotless, _ := strconv.ParseInt(strings.Replace(latest_tag, ".", "", -1), 10, 64)
+
+	if int(version_dotless) <= int(latest_tag_dotless) {
+		fmt.Printf("Update Available:\n %v -> %v", version, latest_tag)
+	} else {
+		fmt.Println("Up to date!")
+	}
 }
 
 func Figlet() {
