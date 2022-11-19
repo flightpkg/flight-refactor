@@ -59,7 +59,19 @@ func Uninstall(args []string) {
 		fmt.Println("flight uninstall <pkg>")
 	} else {
 		os.RemoveAll(fmt.Sprintf("./node_modules/%v", args[0]))
+		fmt.Println("Uninstalled " + args[0])
+
+		files, _ := ioutil.ReadDir("./node_modules")
+		if len(files) == 0 {
+			os.Remove("./node_modules")
+		}
 	}
+}
+
+func Status() {
+	Version := "2.0.3"
+	fmt.Printf("Version: %v", Version)
+	//TODO: get updating working
 }
 
 func Figlet() {
@@ -82,5 +94,6 @@ flight help
 flight version
 flight install <pkg>
 flight uninstall <pkg>
-flight update`)
+flight update
+flight status`)
 }
