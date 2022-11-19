@@ -2,57 +2,9 @@ package flightpkg
 
 import (
 	"bufio"
-	"encoding/json"
 	"fmt"
-	"io/ioutil"
-	"net/http"
 	"os"
-
-	grab "github.com/cavaliergopher/grab/v3"
-	targz "github.com/walle/targz"
 )
-
-func Install(args []string) {
-	registry := "https://registry.yarnpkg.com/"
-	// registry2 := "https://registry.npmmirror.com/"
-	if len(args) != 1 {
-		fmt.Println("flight install <pkg>")
-	} else {
-
-		resp, err := http.Get(fmt.Sprintf(registry+"%v", args[0]))
-		if err != nil {
-			fmt.Println(err)
-		}
-
-		defer resp.Body.Close()
-
-		body, err := ioutil.ReadAll(resp.Body)
-
-		if err != nil {
-			fmt.Println(err)
-		}
-
-		/* Getting the version of the package that is being installed. */
-		var data map[string]interface{}
-		json.Unmarshal(body, &data)
-
-		latest := data["dist-tags"].(map[string]interface{})["latest"].(string)
-		tarball := data["versions"].(map[string]interface{})[latest].(map[string]interface{})["dist"].(map[string]interface{})["tarball"].(string)
-
-		os.Mkdir(".flight", 0777)
-		os.Mkdir(".flight\\"+args[0], 0777)
-		_, err = grab.Get(".flight\\"+args[0], tarball)
-		if err != nil {
-			fmt.Println(err)
-		}
-		fmt.Println("Installed " + args[0] + " @ " + latest)
-
-		targz.Extract(fmt.Sprintf("./.flight/%v/%v-%v.tgz", args[0], args[0], latest), "./node_modules")
-		os.RemoveAll(".flight")
-		os.Rename(fmt.Sprintf("./node_modules/package"), fmt.Sprintf("./node_modules/%v", args[0]))
-		fmt.Println("Extracted " + args[0] + " @ " + latest)
-	}
-}
 
 func Figlet() {
 	// Open the file.
