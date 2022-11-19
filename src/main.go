@@ -14,6 +14,10 @@ func main() {
 	} else {
 		if cli[0] == "help" {
 			funcs.Help()
+		} else if cli[0] == "install" {
+			funcs.Install(cli[1:])
+		} else {
+			fmt.Println("flight <command> [arguments]")
 		}
 	}
 }
