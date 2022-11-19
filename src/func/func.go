@@ -95,8 +95,10 @@ func Status() {
 	latest_tag := data["tag_name"].(string)
 	latest_tag_dotless, _ := strconv.ParseInt(strings.Replace(latest_tag, ".", "", -1), 10, 64)
 
-	if int(version_dotless) <= int(latest_tag_dotless) {
+	if int(version_dotless) < int(latest_tag_dotless) {
 		fmt.Printf("Update Available:\n %v -> %v", version, latest_tag)
+	} else if int(version_dotless) > int(latest_tag_dotless) {
+		fmt.Println("You're a time traveler, aren't you?")
 	} else {
 		fmt.Println("Up to date!")
 	}
