@@ -14,7 +14,7 @@ import (
 	targz "github.com/walle/targz"
 )
 
-var version string = "2.0.3"
+var version string = "2.0.4"
 
 func Install(args []string) {
 	registry := "https://registry.yarnpkg.com/"
@@ -132,10 +132,11 @@ func Update() {
 	fmt.Printf("%v -> %v\n", version, latest_tag)
 
 	op := runtime.GOOS
+	apd, _ := os.UserConfigDir()
 	switch op {
 	case "windows":
-		if int(version_dotless) < int(latest_tag_dotless) {
-			apd, _ := os.UserConfigDir()
+		_, err = os.ReadFile(fmt.Sprintf("%v/.flightpkg/bin/flight.exe", apd))
+		if int(version_dotless) < int(latest_tag_dotless) || os.IsNotExist(err) {
 			url := data["assets"].([]interface{})[0].(map[string]interface{})["browser_download_url"].(string)
 			os.Mkdir(apd+"/.flightpkg/bin", 0777)
 			os.Remove(fmt.Sprintf("%v/.flightpkg/bin/flight.exe", apd))
@@ -156,6 +157,10 @@ func Update() {
 		fmt.Printf("%s.\n", op)
 	}
 
+}
+
+func Version() {
+	fmt.Printf("Version: %v\n", version)
 }
 
 func Help() {
