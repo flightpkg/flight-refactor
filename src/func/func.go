@@ -132,14 +132,16 @@ func Update() {
 	fmt.Printf("%v -> %v\n", version, latest_tag)
 
 	op := runtime.GOOS
-	apd, _ := os.UserConfigDir()
+
 	switch op {
 	case "windows":
+		apd, _ := os.UserConfigDir()
 		_, err = os.ReadFile(fmt.Sprintf("%v/.flightpkg/bin/flight.exe", apd))
 		if int(version_dotless) < int(latest_tag_dotless) || os.IsNotExist(err) {
+			apd, _ := os.UserConfigDir()
 			url := data["assets"].([]interface{})[0].(map[string]interface{})["browser_download_url"].(string)
 			os.Mkdir(apd+"/.flightpkg/bin", 0777)
-			os.Remove(fmt.Sprintf("%v/.flightpkg/bin/flight.exe", apd))
+			os.RemoveAll(fmt.Sprintf("%v/.flightpkg/", apd))
 			_, err := grab.Get(fmt.Sprintf("%v/.flightpkg/bin/flight.exe", apd), url)
 			if err != nil {
 				fmt.Println(err)
