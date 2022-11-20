@@ -8,7 +8,6 @@ import (
 
 func main() {
 	cli := os.Args[1:]
-	funcs.Figlet()
 	if len(cli) == 0 {
 		fmt.Println("flight <command> [arguments]")
 	} else {

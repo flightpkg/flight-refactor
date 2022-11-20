@@ -159,19 +159,6 @@ func Update() {
 
 }
 
-var fig string = "  ___  __    _         __       _    \n" +
-	".' ..][  |  (_)       [  |     / |_  \n" +
-	"_| |_   | |  __   .--./)| |--. `| |-' \n" +
-	"'-| |-'  | | [  | / /'`\\;| .-. | | |   \n" +
-	"| |    | |  | | \\ \\._//| | | | | |,  \n" +
-	"[___]  [___][___].',__`[___]|__]\\__/     \n" +
-	"		( ( __))            \n"
-
-func Figlet() {
-	// Open the file.
-	fmt.Println(fig)
-}
-
 func Help() {
 	fmt.Println(`flight <command> [arguments]
 
