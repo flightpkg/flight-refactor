@@ -14,8 +14,7 @@ import (
 	targz "github.com/walle/targz"
 )
 
-// var version string = "2.0.3"
-var version string = "0.0.0"
+var version string = "2.0.3"
 
 func Install(args []string) {
 	registry := "https://registry.yarnpkg.com/"
