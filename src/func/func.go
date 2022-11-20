@@ -7,12 +7,15 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"runtime"
 	"strconv"
 	"strings"
 
 	grab "github.com/cavaliergopher/grab/v3"
 	targz "github.com/walle/targz"
 )
+
+var version string = "2.0.3"
 
 func Install(args []string) {
 	registry := "https://registry.yarnpkg.com/"
@@ -71,7 +74,6 @@ func Uninstall(args []string) {
 }
 
 func Status() {
-	version := "2.0.3"
 	version_dotless, _ := strconv.ParseInt(strings.ReplaceAll(version, ".", ""), 10, 64)
 	latest := "https://api.github.com/repos/flightpkg/flight-v2/releases/latest"
 	fmt.Printf("Version: %v\n", version)
@@ -88,8 +90,9 @@ func Status() {
 		fmt.Println(err)
 	}
 
-	/* Getting the version of the package that is being installed. */
 	var data map[string]interface{}
+
+	/* Getting the version of the package that is being installed. */
 	json.Unmarshal(body, &data)
 
 	latest_tag := data["tag_name"].(string)
@@ -105,7 +108,52 @@ func Status() {
 }
 
 func Update() {
-	//TODO: logic for updating the binary
+	latest := "https://api.github.com/repos/flightpkg/flight-v2/releases/latest"
+	fmt.Printf("Version: %v\n", version)
+	resp, err := http.Get(latest)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	defer resp.Body.Close()
+
+	body, err := ioutil.ReadAll(resp.Body)
+
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	var data map[string]interface{}
+
+	/* Getting the version of the package that is being installed. */
+	json.Unmarshal(body, &data)
+	latest_tag := data["tag_name"].(string)
+	latest_tag_dotless, _ := strconv.ParseInt(strings.Replace(latest_tag, ".", "", -1), 10, 64)
+	version_dotless, _ := strconv.ParseInt(strings.ReplaceAll(version, ".", ""), 10, 64)
+
+	op := runtime.GOOS
+	switch op {
+	case "windows":
+		if int(version_dotless) < int(latest_tag_dotless) {
+			apd, _ := os.UserConfigDir()
+			url := data["assets"].([]interface{})[0].(map[string]interface{})["browser_download_url"].(string)
+			os.Mkdir(apd+"/.flightpkg/bin", 0777)
+			os.Remove(apd + "/.flightpkg/bin/flight.exe")
+			_, err := grab.Get(apd+"/.flightpkg/flight.exe", url)
+			if err != nil {
+				fmt.Println(err)
+			}
+		} else {
+			fmt.Println("Up to date!")
+		}
+	case "darwin":
+		//TODO: Add MacOS support
+	case "linux":
+		//TODO: Add Linux support
+	default:
+		fmt.Printf("%s.\n", op)
+	}
+
 }
 
 func Figlet() {
